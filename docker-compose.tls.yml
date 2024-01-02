@@ -17,3 +17,10 @@ services:
     labels:
       - "traefik.http.routers.staticfiles.entrypoints=websecure"
       - "traefik.http.routers.staticfiles.tls.certresolver=le-resolver"
+
+  reverse-proxy:
+    command:
+      # Redirect all HTTP traffic to HTTPS
+      # See: https://jensknipper.de/blog/traefik-http-to-https-redirect/
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
