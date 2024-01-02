@@ -8,10 +8,16 @@ services:
       - "DJANGO_CSRF_COOKIE_SECURE=true"
       - "DJANGO_SECURE_SSL_REDIRECT=true"
     labels:
-      - "traefik.http.routers.production.rule=Host(`${MY_DOMAIN}`)"
+      - "traefik.http.routers.production.rule=Host(`${MY_DOMAIN}`) || Host(`www.${MY_DOMAIN}`)"
       - "traefik.http.routers.production.entrypoints=websecure"
       - "traefik.http.routers.production.tls.certresolver=le-resolver"
       - "traefik.http.routers.production.priority=1"
+      # Redirect www to non-www, see: https://dev.to/fabiancdng/redirect-http-to-https-and-www-to-non-www-with-traefik-3-40i6
+      - "traefik.http.middlewares.redirect-to-non-www.redirectregex.regex=^https?://www.${MY_DOMAIN}/(.*)"
+      - "traefik.http.middlewares.redirect-to-non-www.redirectregex.replacement=https://${MY_DOMAIN}/$${1}"
+      - "traefik.http.middlewares.redirect-to-non-www.redirectregex.permanent=true"
+      - "traefik.http.routers.production.middlewares=redirect-to-non-www"
+
 
   nginx:
     labels:
