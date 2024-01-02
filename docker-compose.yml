@@ -58,6 +58,10 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      # Redirect all HTTP traffic to HTTPS
+      # See: https://jensknipper.de/blog/traefik-http-to-https-redirect/
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.le-resolver.acme.httpchallenge=true"
       - "--certificatesresolvers.le-resolver.acme.httpchallenge.entrypoint=web"
